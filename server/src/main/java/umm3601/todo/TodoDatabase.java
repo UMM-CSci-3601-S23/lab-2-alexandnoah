@@ -3,6 +3,7 @@ package umm3601.todo;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,10 @@ public class TodoDatabase {
       }
       filteredTodos = filterTodosByStatus(filteredTodos, targetBoolean);
     }
-
+    if (queryParams.containsKey("orderBy")) {
+      String targetOrder = queryParams.get("orderBy").get(0);
+      filteredTodos = OrderBy(filteredTodos, targetOrder);
+    }
       return filteredTodos;
     }
 
@@ -76,5 +80,18 @@ public class TodoDatabase {
   public Todo[] filterTodosByBody(Todo[] todos, String targetBody) {
     return Arrays.stream(todos).filter(x -> x.body.equals(targetBody)).toArray(Todo[]::new);
   }
+
+  public Todo[] OrderBy(Todo[] todos, String targetOrder) {
+    if (targetOrder.equals("owner")) {
+      return Arrays.stream(todos).sorted(Comparator.comparing((Todo t) -> t.owner)).toArray(Todo[]::new);
+    } else if (targetOrder.equals("body")) {
+      return Arrays.stream(todos).sorted(Comparator.comparing((Todo t) -> t.body)).toArray(Todo[]::new);
+    } else if (targetOrder.equals("status")) {
+      return Arrays.stream(todos).sorted(Comparator.comparing((Todo t) -> t.status)).toArray(Todo[]::new);
+    } else {
+      return Arrays.stream(todos).sorted(Comparator.comparing((Todo t) -> t.category)).toArray(Todo[]::new);
+    }
+  }
+
 
 }
