@@ -1,6 +1,7 @@
 package umm3601.todo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -126,11 +127,31 @@ public class TodoControllerSpec {
   }
 
   @Test
-  public void canGetTodosWithGivenCategoryAndOwnerAndBody() throws IOException {
+  public void canGetTodosWithStatus() throws IOException {
+
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] {"complete"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals(true,todo.status);
+    }
+
+    assertEquals(143, argument.getValue().length);
+  }
+
+
+  @Test
+  public void canGetTodosWithGivenCategoryAndOwnerAndBodyAndStatus() throws IOException {
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("category", Arrays.asList(new String[] {"video games"}));
     queryParams.put("owner", Arrays.asList(new String[] {"Fry"}));
     queryParams.put("body", Arrays.asList(new String[] {"Ipsum esse est ullamco magna tempor anim laborum non officia deserunt veniam commodo. Aute minim incididunt ex commodo."}));
+    queryParams.put("status", Arrays.asList(new String[] {"incomplete"}));
     when(ctx.queryParamMap()).thenReturn(queryParams);
 
     todoController.getTodos(ctx);
@@ -141,26 +162,9 @@ public class TodoControllerSpec {
       assertEquals("Fry", todo.owner);
       assertEquals("video games", todo.category);
       assertEquals("Ipsum esse est ullamco magna tempor anim laborum non officia deserunt veniam commodo. Aute minim incididunt ex commodo.", todo.body);
+      assertFalse(todo.status);
     }
     assertEquals(1, argument.getValue().length);
-  }
-
-  @Test
-  public void canGetTodosWithStatus() throws IOException {
-
-    Map<String, List<String>> queryParams = new HashMap<>();
-    queryParams.put("staus", Arrays.asList(new String[] {"complete"}));
-    when(ctx.queryParamMap()).thenReturn(queryParams);
-
-    todoController.getTodos(ctx);
-
-    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
-    verify(ctx).json(argument.capture());
-    for (Todo todo : argument.getValue()) {
-      assertEquals("complete",todo.status);
-    }
-
-    assertEquals(143, argument.getValue().length);
   }
 
 }
