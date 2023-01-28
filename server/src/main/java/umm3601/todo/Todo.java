@@ -9,6 +9,8 @@ public class Todo {
   public String category;
   public Boolean status;
   public String body;
+  public String contains;
+  public String limit;
 
 
 }

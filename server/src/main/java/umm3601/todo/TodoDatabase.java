@@ -30,17 +30,21 @@ public class TodoDatabase {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
-    if (queryParams.containsKey("category")) {
-      String targetCategory = queryParams.get("category").get(0);
-      filteredTodos = filterTodosByCategory(filteredTodos, targetCategory);
-    }
     if (queryParams.containsKey("owner")) {
       String targetOwner = queryParams.get("owner").get(0);
       filteredTodos = filterTodosByOwner(filteredTodos, targetOwner);
     }
+    if (queryParams.containsKey("category")) {
+      String targetCategory = queryParams.get("category").get(0);
+      filteredTodos = filterTodosByCategory(filteredTodos, targetCategory);
+    }
     if (queryParams.containsKey("body")) {
       String targetBody = queryParams.get("body").get(0);
       filteredTodos = filterTodosByBody(filteredTodos, targetBody);
+    }
+    if (queryParams.containsKey("contains")) {
+      String targetContains = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByBody(filteredTodos, targetContains);
     }
     if (queryParams.containsKey("status")) {
       boolean targetBoolean = false;
@@ -52,7 +56,12 @@ public class TodoDatabase {
     }
     if (queryParams.containsKey("orderBy")) {
       String targetOrder = queryParams.get("orderBy").get(0);
-      filteredTodos = OrderBy(filteredTodos, targetOrder);
+      filteredTodos = orderBy(filteredTodos, targetOrder);
+    }
+
+    if (queryParams.containsKey("limit")) {
+      String targetLimit = queryParams.get("limit").get(0);
+      filteredTodos = orderBy(filteredTodos, targetLimit);
     }
       return filteredTodos;
     }
@@ -81,7 +90,16 @@ public class TodoDatabase {
     return Arrays.stream(todos).filter(x -> x.body.equals(targetBody)).toArray(Todo[]::new);
   }
 
-  public Todo[] OrderBy(Todo[] todos, String targetOrder) {
+  public Todo[] filterTodosByContains(Todo[] todos, String targetContains) {
+    return Arrays.stream(todos).filter(x -> x.body.contains(targetContains)).toArray(Todo[]::new);
+  }
+
+  public Todo[] filterTodosByLimit(Todo[] todos, String targetLimit) {
+    return Arrays.stream(todos).limit(Integer.valueOf(targetLimit)).toArray(Todo[]::new);
+  }
+
+
+  public Todo[] orderBy(Todo[] todos, String targetOrder) {
     if (targetOrder.equals("owner")) {
       return Arrays.stream(todos).sorted(Comparator.comparing((Todo t) -> t.owner)).toArray(Todo[]::new);
     } else if (targetOrder.equals("body")) {
