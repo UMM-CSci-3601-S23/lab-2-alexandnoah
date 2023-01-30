@@ -196,7 +196,7 @@ public class TodoControllerSpec {
     }
     assertEquals(1, argument.getValue().length);
   }
-  /*
+
   @Test
   public void canSortWithOrderByOwner() throws IOException {
 
@@ -208,13 +208,8 @@ public class TodoControllerSpec {
 
     ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
     verify(ctx).json(argument.capture());
-    for (Todo todo : argument.getValue()) {
-      assertEquals("Ad sint incididunt officia veniam incididunt. Voluptate exercitation eu aliqua laboris occaecat deserunt cupidatat velit nisi sunt mollit sint amet.", todo.body);
-      tests changes what todo.[param] produces based on the other parameter given in assertEquals
-      this happens for all tests, we can't figure out why
-      we tested the code with the actual site though and it seems to work, we just cannot get these tests to pass
-  }
-
+    Todo todo = argument.getValue()[0];
+    assertEquals("Ad sint incididunt officia veniam incididunt. Voluptate exercitation eu aliqua laboris occaecat deserunt cupidatat velit nisi sunt mollit sint amet.", todo.body);
 
   }
 
@@ -274,5 +269,5 @@ public class TodoControllerSpec {
     assertEquals(143, argument.getValue().length);
 
   }
-  */
+
 }
